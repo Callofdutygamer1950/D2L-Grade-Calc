@@ -1,0 +1,31 @@
+Example State University
+MGMT 320 Operations Management (sample syllabus for tests)
+Instructor: Dr. Alex Example
+Office: Room 101, Example Hall | Phone: (555) 010-0123 | Email: instructor@example.edu
+
+ATTENDANCE
+Attendance is taken at the start of each class.
+• 3 bonus points will be awarded for perfect attendance!
+
+GRADING
+
+Homework 25%
+
+Quizzes 30%
+
+Exams 45%
+
+COURSE SCHEDULE
+Week 1: Introduction to operations management
+Week 2: Process analysis
+
+Bonus Assignments Summary
+Bonus Assignments Platform Due Date Bonus Points
+Project Management Simulation Pearson MyLab Oct. 5 3
+Forecasting Simulation Pearson MyLab Nov. 9 3
+Self-evaluation Reports D2L In-class 3
+Perfect Attendance D2L N/A 3
+Example State University Fall 2025
+
+ACADEMIC INTEGRITY
+All work must be your own.

@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "D2L Grade Calculator",
+  "version": "1.0.0",
+  "description": "Shows your overall course grade at the top of the D2L Grades page, using category weights you set or pull from your syllabus.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://chhfebjnwftjyogxyzcx.supabase.co/*"],
+  "background": {
+    "service_worker": "background.js",
+    "scripts": ["config.js", "background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.desire2learn.com/d2l/lms/grades/my_grades/*",
+        "https://*.brightspace.com/d2l/lms/grades/my_grades/*"
+      ],
+      "js": ["grades-core.js", "grouping.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "d2l-grade-calc@local",
+      "strict_min_version": "121.0"
+    }
+  }
+}

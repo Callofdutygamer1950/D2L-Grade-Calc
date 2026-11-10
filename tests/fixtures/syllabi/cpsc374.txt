@@ -1,0 +1,77 @@
+Example State University
+Department of Computer Science
+CPSC 374 Algorithms and Data Structures (sample syllabus for tests)
+
+INSTRUCTOR
+Dr. Alex Example
+Office: Room 101, Example Hall
+Phone: (555) 010-0123
+Email: instructor@example.edu
+
+ASSESSMENT
+
+STUDENT LEARNING OUTCOMES
+1. Describe and apply the concepts of recursion, object-oriented design, abstract data types,
+and algorithm analysis.
+2. Implement and compare classic data structures.
+
+COURSE GRADES
+
+The course grade will be based on the four quizzes, five assignments, two exams, and class
+
+participation and attendance. The following is a tentative point assignment for the course (the
+
+points of homework are only estimates and subject to adjustment):
+
+Category Points
+
+Assignments 500 (100  4, 50  2)
+
+Midterm Exam 100
+
+Final Exam 200
+4
+
+Quizzes 200 (50  4)
+
+Total 1,000
+
+The final grade is calculated by adding the number of points that the student earned divided by the
+
+total number of possible points. The following table gives the final conversion scale for course
+
+grades:
+
+Scale Grade
+
+90 – 100 % A
+
+80 – 89 % B
+
+70 – 79 % C
+
+60 – 69 % D
+
+59% and below F
+
+LATE WORK POLICY
+
+Late work can gain partial credit under the following policy:
+
+Up to 1 day 10%
+
+Up to 2 days 20%
+
+EXAMS
+There will be a midterm exam and a final exam covering the textbook, lectures, and other
+materials discussed in class. No makeup exam will be offered. The exams will be
+worth 300 points and will be 30 percent of your course grade.
+
+QUIZZES
+Four quizzes will be given to help ensure students stay up with assigned material. The Quiz will
+be multiple choice or essay questions. The quizzes will be worth 200 points and will be 20 percent of your course
+grade.
+
+ACADEMIC INTEGRITY
+Copying another student's program, in whole or in part, results in a
+50% deduction.

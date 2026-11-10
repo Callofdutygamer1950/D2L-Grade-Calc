@@ -1,0 +1,42 @@
+Example State University
+CpSc 327 System Administration and Security (sample syllabus for tests)
+Instructor: Dr. Alex Example
+Office: Room 101, Example Hall
+Phone: (555) 010-0123
+Email: instructor@example.edu
+
+COURSE OBJECTIVES
+Install, configure and secure server operating systems.
+Develop communication and teamwork skills
+essential for system administrators.
+Communicate effectively in a variety of
+professional contexts.
+
+Category Points
+
+Participation & labs 25 %
+
+Homework and Discussion 30 %
+
+Group Project and presentation 10%
+
+Quizzes 17.5%
+
+Test 17.5%
+
+Total 100%
+
+GRADING SCALE
+
+90 – 100 % A
+
+80 – 89 % B
+
+70 – 79% C
+
+60 – 69% D
+
+Below 60% F
+
+ATTENDANCE
+Attendance is expected at every lab session.

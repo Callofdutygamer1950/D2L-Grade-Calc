@@ -1,0 +1,34 @@
+Example State University
+CSS 120 Introduction to Security Studies (sample syllabus for tests)
+Instructor: Dr. Alex Example
+Email: instructor@example.edu
+Phone: (555) 010-0123
+
+DISCUSSION BOARD
+Discussion board questions will be posted each week and answers are due every
+Thursday, prior to 6:00 p.m. EST. Discussion board questions are worth ten points each. One sentence answers
+are not acceptable. If your answers are late, a three-point deduction will be deducted from the ten points.
+
+Grading
+
+Grades are calculated by Brightspace on a weekly basis.
+
+Attendance Policy
+
+0-2 Absences 5%
+
+3 Absences 2.5%
+
+4 Absences 0%
+
+If you miss more than 4 absences you will not only lose 5% in attendance, but your grade will also
+
+be reduced further by one full letter grade (10% decrease). Please keep track of your absences and
+
+grades as the semester progresses.
+
+COURSE SCHEDULE
+Week 1: Introduction
+Week 2: Threats and vulnerabilities
+Thursday, prior to 6:00 p.m. EST. Discussion board questions are worth ten points each. One sentence answers
+must include supporting examples.

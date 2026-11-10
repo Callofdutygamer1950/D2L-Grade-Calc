@@ -1,0 +1,30 @@
+CPSC 365 (sample syllabus for tests)
+Example State University
+
+Instructor: Dr. Alex Example
+Office: Room 101, Example Hall
+Phone: (555) 010-0123
+E-mail: instructor@example.edu
+Office Hours: MW 10:00 - 11:00, or by appointment
+
+Course Description
+An introduction to the design and analysis of software systems.
+
+Textbook
+Any standard textbook on the subject.
+
+Grading
+
+A: 90% and above
+B: 80% and above
+C: 70% and above
+D: 60% and above
+F: Below 60%
+
+40% for in-class written quizzes
+10% homework assignments
+10% for tearm project
+20% for the midterm examination.
+20% for the final examination.
+
+You get participation points when you actively participate in the class by asking and answering questions.

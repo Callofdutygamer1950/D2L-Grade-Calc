@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Weights page harness</title>
+  <link rel="stylesheet" href="/extension/weights.css">
+</head>
+<body>
+  <!--
+    Manual test harness: loads the real weights page (extension/weights.html + weights.js)
+    with a fake extension API, so it can be tried in a normal browser tab.
+    Run: node tests/harness/serve.js, then open http://127.0.0.1:5178/?course=demo
+    ?course=flat (no D2L categories, like CPSC 237) or ?course=demo (categories, like CPSC 374).
+    window.__store shows what the page saved; window.__sent shows messages to the background.
+  -->
+  <script>
+    const ITEM = (name, earned, possible) => ({ name, earned, possible, pct: null, excluded: false });
+    const LOOSE = (name, e, p) => ({ name, d2lPct: null, items: [ITEM(name, e, p)], loose: true });
+    const COURSES = {
+      flat: {
+        courseName: 'CPSC-237-01 - Mobile App Development (harness)',
+        rawGroups: [LOOSE('HW01', 16, 16), LOOSE('HW02', 22, 22), LOOSE('HW03', 32, 32), LOOSE('HW04', 45, 46),
+          LOOSE('GroupProj', 43, 50), LOOSE('HW05', 35, 36)],
+      },
+      demo: {
+        courseName: 'CPSC-374-01 - Algorithms and Data Structures (harness)',
+        rawGroups: [
+          { name: 'Quizzes', d2lPct: 78.67, loose: false, items: [ITEM('Quiz #1', 29, 50), ITEM('Quiz #2', 49, 50), ITEM('Quiz #3', 40, 50), ITEM('Quiz #4', null, 50)] },
+          { name: 'Assignments', d2lPct: 90, loose: false, items: [ITEM('Assignment 1', 45, 50), ITEM('Assignment 2', 70, 100)] },
+          { name: 'Exams', d2lPct: 85, loose: false, items: [ITEM('Midterm', 85, 100), ITEM('Final', null, 200)] },
+        ],
+      },
+    };
+    const params = new URLSearchParams(location.search);
+    const course = params.get('course') || 'demo';
+    const store = { ['info:' + course]: COURSES[course] };
+    if (params.get('shared')) store['source:' + course] = { from: 'shared', students: 3, scope: 'course' };
+    const listeners = [];
+    window.__store = store;
+    window.__sent = [];
+    window.chrome = {
+      storage: {
+        local: {
+          async get(keys) { const o = {}; for (const k of [].concat(keys)) if (k in store) o[k] = structuredClone(store[k]); return o; },
+          async set(obj) { const ch = {}; for (const [k, v] of Object.entries(obj)) { ch[k] = { newValue: v }; store[k] = structuredClone(v); } listeners.forEach((f) => f(ch, 'local')); },
+          async remove(keys) { for (const k of [].concat(keys)) delete store[k]; },
+        },
+        onChanged: { addListener: (f) => listeners.push(f) },
+      },
+      runtime: {
+        getURL: (p) => '/extension/' + p,
+        async sendMessage(msg) {
+          window.__sent.push(msg);
+          if (msg.type === 'sharingStatus') return { configured: params.get('configured') !== '0', enabled: store.shareEnabled !== false };
+        },
+      },
+    };
+  </script>
+  <div id="mount"></div>
+  <script type="module">
+    // Pull the real page's <main> in, then run its scripts.
+    const html = await (await fetch('/extension/weights.html')).text();
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    document.getElementById('mount').replaceWith(doc.querySelector('main'));
+    await new Promise((resolve) => {
+      const s = document.createElement('script');
+      s.src = '/extension/grouping.js';
+      s.onload = resolve;
+      document.body.appendChild(s);
+    });
+    await import('/extension/weights.js');
+  </script>
+</body>
+</html>

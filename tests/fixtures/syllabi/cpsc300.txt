@@ -1,0 +1,44 @@
+Example State University
+CpSc 300 Challenges of Computer Technology (sample syllabus for tests)
+Instructor: Dr. Alex Example
+Email: instructor@example.edu | Phone: (555) 010-0123 | Office: Room 101, Example Hall
+Office hours: online by appointment
+
+COURSE OVERVIEW
+This online course examines the social, ethical and professional challenges raised by computing.
+
+DELIVERABLES
+Weekly deliverables (assignments, quizzes and discussions) together make up a large part of
+the grade. The final paper and presentation are worth
+30% of the grade, so please plan accordingly. Regular deliverable submissions are
+due on Sunday at 11:59 PM.
+
+LATE SUBMISSIONS
+Each student has two late passes. Once both late passes are used and the
+submissions are consumed, any additional delayed submission will result in 70%
+of the earned score.
+
+GRADING SCALE
+
+90% - 100% ......................................................................... "A"
+
+80 - 89.9% ........................................................................... "B"
+
+70 - 79.9% ........................................................................... "C"
+
+60 - 69.9% ........................................................................... "D"
+
+Less than 60% ..................................................................... "F"
+
+GRADE DISTRIBUTION
+
+Assignments ......................................................................45%
+
+Quizzes ..............................................................................15%
+
+Discussion .........................................................................15%
+
+Paper/Case Study & Presentation .......................................25%
+
+ACADEMIC INTEGRITY
+All work must be your own. Violations are reported to the university.

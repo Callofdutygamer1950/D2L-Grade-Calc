@@ -1,0 +1,28 @@
+Example State University
+MIS 265 Management Information Systems (sample syllabus for tests)
+Instructor: Dr. Alex Example
+Email: instructor@example.edu
+Office: Room 101, Example Hall
+Phone: (555) 010-0123
+
+COURSE MATERIALS
+MyLab MIS access is required for this course.
+
+GRADING
+Your grade will be made up of the following:
+
+MyLab MIS: 15%
+
+Assignments: 39%
+
+Outcomes Assessment: 1%
+
+Quizzes: 25%
+
+Comprehensive final exam: 20%
+
+Grades will be assigned on the University’s standard grading scale (90% is an A, 80% is a B, 70% is a C, 60% is a D, and below
+60% is an F). Your final grade will be based on what you have earned and is not negotiable upon semester’s end.
+
+LATE WORK
+Late work is not accepted without prior approval.

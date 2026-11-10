@@ -1,0 +1,29 @@
+# Dependencies (dev/test only; the extension itself has none)
+node_modules/
+
+# Packaged builds. Rebuild from source instead of committing them.
+*.zip
+*.crx
+*.xpi
+web-ext-artifacts/
+
+# Chrome "Pack extension" signing key. NEVER publish this.
+*.pem
+
+# Local secrets, if any are ever added (the Supabase publishable key in config.js is public by design)
+.env
+.env.*
+
+# Editors / OS clutter
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# Test output
+coverage/

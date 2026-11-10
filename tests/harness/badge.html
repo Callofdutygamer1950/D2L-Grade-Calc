@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grades - CPSC-374-01 - Algorithms and Data Structures - Harness University</title>
+  <!--
+    Manual test harness for the grade badge: a fake D2L Grades page that runs the
+    real content script with a fake extension API.
+    Run: node tests/harness/serve.js, then open http://127.0.0.1:5178/tests/harness/badge.html
+    Add ?weights=1 to start with saved weights, ?shared=1 to simulate a shared setup.
+  -->
+  <style>
+    /* Rough copy of D2L's layout around the badge. */
+    body { margin: 0; font-family: Lato, system-ui, sans-serif; color: #202122; background: #fff; }
+    .nav { height: 70px; border-bottom: 1px solid #e3e9f1; display: flex; align-items: center; padding: 0 24px; font-size: 22px; }
+    .wrap { max-width: 1230px; margin: 0 auto; padding: 0 16px; }
+    #d_page_header { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; }
+    #d_page_title { font-size: 40px; font-weight: 400; margin: 0; }
+    .print { color: #006fbf; }
+    table { width: 100%; border-collapse: collapse; border: 1px solid #cdd5dc; }
+    th, td { padding: 14px 10px; border-bottom: 1px solid #e3e9f1; text-align: left; }
+    .spacer { height: 1200px; }
+  </style>
+</head>
+<body>
+  <div class="nav">CPSC-374-01 - Algorithms and Data Structures</div>
+  <div class="wrap">
+    <div id="d_page_header" class="d2l-page-header">
+      <div class="d2l-heading"><h1 id="d_page_title">Grades</h1></div>
+      <span class="print">Print</span>
+    </div>
+    <table class="d2l-table d2l-grid d_gl" summary="List of grade items and their values">
+      <tr class="d_gh"><th scope="col" colspan="2">Grade Item</th><th scope="col">Points</th><th scope="col">Grade</th><th scope="col">Comments and Assessments</th></tr>
+      <tr class="d_ggl1"><th scope="row" colspan="2">Quizzes</th><td></td><td>78.67 %</td><td></td></tr>
+      <tr><td></td><th scope="row">Quiz #1</th><td>29 / 50</td><td>58 %</td><td></td></tr>
+      <tr><td></td><th scope="row">Quiz #2</th><td>49 / 50</td><td>98 %</td><td></td></tr>
+      <tr><td></td><th scope="row">Quiz #3</th><td>40 / 50</td><td>80 %</td><td></td></tr>
+      <tr><td></td><th scope="row">Quiz #4</th><td>- / 50</td><td>-%</td><td></td></tr>
+      <tr class="d_ggl1"><th scope="row" colspan="2">Assignments</th><td></td><td>90 %</td><td></td></tr>
+      <tr><td></td><th scope="row">Assignment 1</th><td>45 / 50</td><td>90 %</td><td></td></tr>
+      <tr><td></td><th scope="row">Assignment 2</th><td>70 / 100</td><td>70 %</td><td></td></tr>
+      <tr><td></td><th scope="row">Assignment 3</th><td>100 / 100</td><td>100 %</td><td></td></tr>
+      <tr><td></td><th scope="row">Assignment 4</th><td>100 / 100</td><td>100 %</td><td></td></tr>
+      <tr class="d_ggl1"><th scope="row" colspan="2">Exams</th><td></td><td>85 %</td><td></td></tr>
+      <tr><td></td><th scope="row">Midterm</th><td>85 / 100</td><td>85 %</td><td></td></tr>
+      <tr><td></td><th scope="row">Final</th><td>- / 200</td><td>-%</td><td></td></tr>
+    </table>
+    <div class="spacer"></div>
+  </div>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const key = location.host + ':' + (params.get('ou') || '4066209');
+    const store = {};
+    if (params.get('weights')) {
+      store['weights:' + key] = { Quizzes: 20, Assignments: 50, Exams: 30 };
+      store['source:' + key] = { from: 'user' };
+    }
+    const listeners = [];
+    window.__store = store;
+    window.__sent = [];
+    window.chrome = {
+      storage: {
+        local: {
+          async get(keys) { const o = {}; for (const k of [].concat(keys)) if (k in store) o[k] = structuredClone(store[k]); return o; },
+          async set(obj) { const ch = {}; for (const [k, v] of Object.entries(obj)) { ch[k] = { newValue: v }; store[k] = structuredClone(v); } listeners.forEach((f) => f(ch, 'local')); },
+          async remove(keys) { for (const k of [].concat(keys)) delete store[k]; },
+        },
+        onChanged: { addListener: (f) => listeners.push(f) },
+      },
+      runtime: {
+        getURL: (p) => '/extension/' + p,
+        async sendMessage(msg) {
+          window.__sent.push(msg);
+          if (msg.type === 'fetchShared' && params.get('shared')) {
+            return { ok: true, result: { setup: { weights: { Quizzes: 25, Assignments: 45, Exams: 30 } }, students: 4, scope: 'section' } };
+          }
+          return { ok: true, result: null };
+        },
+      },
+    };
+    // The real page would answer the enrollment request; here it just fails, so the title is used.
+    if (!history.state) history.replaceState({}, '', location.pathname + '?ou=' + (params.get('ou') || '4066209') + (location.search.replace(/^\?/, '&')));
+  </script>
+  <script src="/extension/grades-core.js"></script>
+  <script src="/extension/grouping.js"></script>
+  <script src="/extension/content.js"></script>
+</body>
+</html>

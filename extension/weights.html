@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grade Weights</title>
+  <link rel="stylesheet" href="weights.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Grade weights</h1>
+      <p id="course" class="muted"></p>
+    </header>
+
+    <section id="missing" hidden>
+      <p>Open (or refresh) this course's Grades page in D2L first, then click <b>Set weights</b> on the grade badge.</p>
+    </section>
+
+    <section id="editor" hidden>
+      <h2>Category weights</h2>
+      <p class="muted">Enter how much each category counts toward your final grade, as a percentage. Leave a box empty to leave that category out.</p>
+      <table>
+        <thead>
+          <tr><th>Category</th><th class="num">Your grade</th><th class="num">Weight</th></tr>
+        </thead>
+        <tbody id="rows"></tbody>
+        <tfoot>
+          <tr><td>Total</td><td></td><td class="num" id="total"></td></tr>
+        </tfoot>
+      </table>
+      <p id="totalWarn" class="warn" hidden></p>
+      <div class="buttons">
+        <button type="button" id="save" class="primary">Save weights</button>
+        <button type="button" id="clear">Clear all</button>
+        <span id="status" class="status" role="status"></span>
+      </div>
+    </section>
+
+    <section id="groups" hidden>
+      <h2>Groups</h2>
+      <p class="muted">This course doesn't use D2L categories, so items were grouped by name (HW01, HW02… → “HW”). To move an item, type a different group name. Items with the same group name share one weight.</p>
+      <datalist id="groupNames"></datalist>
+      <table>
+        <thead>
+          <tr><th>Item</th><th>Group</th></tr>
+        </thead>
+        <tbody id="groupRows"></tbody>
+      </table>
+      <div class="buttons">
+        <button type="button" id="resetGroups">Reset to automatic</button>
+        <span id="groupStatus" class="status" role="status"></span>
+      </div>
+    </section>
+
+    <section id="syllabus" hidden>
+      <h2>Fill from syllabus</h2>
+      <p class="muted">Upload the syllabus PDF or paste its grading section. The extension looks for lines like “Quizzes … 20%” or a points table like “Quizzes 200 … Total 1,000” and fills in the boxes above. Nothing leaves your computer. Check the numbers before saving.</p>
+      <div class="field">
+        <label for="pdf">Syllabus PDF</label>
+        <input type="file" id="pdf" accept="application/pdf,.pdf">
+      </div>
+      <div class="field">
+        <label for="paste">Or paste text</label>
+        <textarea id="paste" rows="7" placeholder="Quizzes ........ 20%&#10;Assignments .... 30%&#10;Exams .......... 50%"></textarea>
+      </div>
+      <div class="buttons">
+        <button type="button" id="find">Find weights</button>
+        <span id="findStatus" class="status" role="status"></span>
+      </div>
+      <div id="found" hidden>
+        <h3>Found in the syllabus</h3>
+        <p class="muted" id="foundNote"></p>
+        <ul id="foundList"></ul>
+      </div>
+    </section>
+    <section id="sharing" hidden>
+      <h2>Sharing with classmates</h2>
+      <p class="muted">When this is on, weights and groups you set are shared anonymously with others in the same class, and if you haven't set any, the setup most classmates shared is used for you. Only category names, item names, groups and weights are shared. Never your grades or who you are.</p>
+      <label class="check">
+        <input type="checkbox" id="shareToggle">
+        Share my setups and use classmates' setups
+      </label>
+      <p id="shareStatus" class="muted"></p>
+    </section>
+  </main>
+  <script src="grouping.js"></script>
+  <script type="module" src="weights.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "weights-harness",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["tests/harness/serve.js"],
+      "port": 5178
+    }
+  ]
+}
