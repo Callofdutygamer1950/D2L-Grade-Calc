@@ -64,22 +64,23 @@ Grade Calculator for D2L is an independent project and is not affiliated with or
 Shows the student's overall course grade on the D2L Brightspace Grades page, calculated from the grades on that page and category weights the student sets (by hand, from their syllabus, or from setups shared by classmates in the same course).
 ```
 
-**Permission justifications:**
+**Permission justification.** The dashboard shows two boxes:
 
-`storage`
+*storage justification*
 ```
 Saves the category weights and item groups the student sets for each course, so the grade badge shows the same weighted grade every time the Grades page is opened. Also stores the sharing on/off setting.
 ```
 
-Host permission `https://chhfebjnwftjyogxyzcx.supabase.co/*`
+*Host permission justification.* This single box must cover **all** host access: the D2L pages the content script runs on *and* the Supabase database.
 ```
-The extension's own database for the optional "share with classmates" feature. It uploads a course's category weights and item groups (no grades or personal information) and downloads the setup most students in the same course shared. Can be turned off on the extension's weights page.
+The extension needs two kinds of host access, both for its single purpose:
+
+1) https://*.desire2learn.com/d2l/lms/grades/my_grades/* and https://*.brightspace.com/d2l/lms/grades/my_grades/* (content script). D2L Brightspace is hosted separately for each school on these domains. The content script runs only on the "My Grades" page, reads the grades table to calculate the student's overall grade, and shows it in a small badge. It does not run on any other page.
+
+2) https://chhfebjnwftjyogxyzcx.supabase.co/* is the extension's own database for the optional "share with classmates" feature. It uploads a course's category weights and item groups (never grades or personal information) and downloads the setup most students in the same course shared. Students can turn sharing off on the extension's weights page.
 ```
 
-Content script / host access `https://*.desire2learn.com/d2l/lms/grades/my_grades/*` and `https://*.brightspace.com/d2l/lms/grades/my_grades/*`
-```
-D2L Brightspace is hosted per school at these domains. The content script runs only on the "My Grades" page to read the grades table and show the overall grade badge. It does not run on any other page.
-```
+The yellow note "Due to the Host Permission, your extension may require an in-depth review" is expected. It shows for any extension that runs on websites, and only means review may take longer.
 
 **Are you using remote code?** No, I am not using remote code.
 (All JavaScript, including the PDF reader pdf.js, is bundled in the package. The Supabase calls only exchange JSON data.)
@@ -97,6 +98,18 @@ Leave everything else unticked: personally identifiable information, health, fin
 **Privacy policy URL:** https://github.com/Callofdutygamer1950/D2L-Grade-Calc/blob/main/PRIVACY.md
 
 ---
+
+## Test instructions page (under "Access")
+
+Reviewers can't sign in to a school's D2L, so explain how to judge the extension without one. Leave the username/password fields empty (there is no test account) and paste this into the additional instructions box:
+
+```
+The extension only runs on a school's D2L Brightspace "My Grades" page (*.desire2learn.com or *.brightspace.com), which needs a student login we can't provide. There it reads the grades table and shows the overall grade in a badge (see screenshots). "Breakdown" lets the student type category weights; "Set weights" opens the extension's weights page, which can fill weights from a syllabus PDF (read locally with the bundled pdf.js) or pasted text.
+
+To review without D2L: the source is public and unminified (except Mozilla's pdf.js): https://github.com/Callofdutygamer1950/D2L-Grade-Calc. It includes a test copy of the Grades page with made-up data running the same code: run "node tests/harness/serve.js", then open http://127.0.0.1:5178/tests/harness/badge.html.
+
+Network: only the extension's Supabase database, for optional anonymous sharing of weights and groups (never grades or personal data). Can be turned off on the weights page.
+```
 
 ## Distribution tab
 
