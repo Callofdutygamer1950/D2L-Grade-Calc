@@ -101,14 +101,10 @@ Leave everything else unticked: personally identifiable information, health, fin
 
 ## Test instructions page (under "Access")
 
-Reviewers can't sign in to a school's D2L, so explain how to judge the extension without one. Leave the username/password fields empty (there is no test account) and paste this into the additional instructions box:
+Reviewers can't sign in to a school's D2L, so explain how to judge the extension without one. Leave the username/password fields empty (there is no test account) and paste this into the additional instructions box (limit 500 characters; this is 481):
 
 ```
-The extension only runs on a school's D2L Brightspace "My Grades" page (*.desire2learn.com or *.brightspace.com), which needs a student login we can't provide. There it reads the grades table and shows the overall grade in a badge (see screenshots). "Breakdown" lets the student type category weights; "Set weights" opens the extension's weights page, which can fill weights from a syllabus PDF (read locally with the bundled pdf.js) or pasted text.
-
-To review without D2L: the source is public and unminified (except Mozilla's pdf.js): https://github.com/Callofdutygamer1950/D2L-Grade-Calc. It includes a test copy of the Grades page with made-up data running the same code: run "node tests/harness/serve.js", then open http://127.0.0.1:5178/tests/harness/badge.html.
-
-Network: only the extension's Supabase database, for optional anonymous sharing of weights and groups (never grades or personal data). Can be turned off on the weights page.
+Runs only on a school's D2L Brightspace "My Grades" page (*.desire2learn.com, *.brightspace.com), which needs a student login we can't provide. It reads the grades table and shows the overall grade in a badge (see screenshots). To review without D2L: the source is public and includes a test copy of the Grades page with made-up data: https://github.com/Callofdutygamer1950/D2L-Grade-Calc (run node tests/harness/serve.js, then open http://127.0.0.1:5178/tests/harness/badge.html).
 ```
 
 ## Distribution tab
