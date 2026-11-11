@@ -36,6 +36,8 @@
     const course = params.get('course') || 'demo';
     const store = { ['info:' + course]: COURSES[course] };
     if (params.get('shared')) store['source:' + course] = { from: 'shared', students: 3, scope: 'course' };
+    // &saved=1: start with weights already saved for the course.
+    if (params.get('saved')) store['weights:' + course] = course === 'flat' ? { HW: 70, GroupProj: 30 } : { Quizzes: 20, Assignments: 50, Exams: 30 };
     const listeners = [];
     window.__store = store;
     window.__sent = [];

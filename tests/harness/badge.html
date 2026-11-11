@@ -88,6 +88,15 @@
         },
       },
     };
+    // ?long=1: add many uncategorized items (like a course with weekly reports) for a long Breakdown.
+    if (params.get('long')) {
+      const tbody = document.querySelector('table.d2l-table tbody') || document.querySelector('table.d2l-table');
+      const add = (name, pts, pct) => tbody.insertAdjacentHTML('beforeend',
+        `<tr><th scope="row" colspan="2">${name}</th><td>${pts}</td><td>${pct}</td><td></td></tr>`);
+      add('Chapter 06 Quiz', '35 / 40', '87.5 %');
+      for (const n of ['Group Project', 'Project PowerPoint Slides', 'Narrative Presentation', 'Project Evaluation']) add(n, '- / 50', '-%');
+      for (const w of ['Nov 2 - Nov 6', 'Nov 9 - Nov 13', 'Nov 16 - Nov 20', 'Nov 23 - Nov 27', 'Nov 30 - Dec 4']) add('Weekly Progress Report ' + w, '- / 10', '-%');
+    }
     // The real page would answer the enrollment request; here it just fails, so the title is used.
     if (!history.state) history.replaceState({}, '', location.pathname + '?ou=' + (params.get('ou') || '4066209') + (location.search.replace(/^\?/, '&')));
   </script>

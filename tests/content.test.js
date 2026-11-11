@@ -30,17 +30,54 @@ async function openPage(rows, { initial = {}, shared = null, enrollment = true }
   return { window, chrome, shadow, $ };
 }
 
-test('badge appears in the title row with the total-points grade', async () => {
+test('badge appears in the title row and asks for weights before showing a grade', async () => {
   const { window, chrome, $ } = await openPage(CATEGORIZED);
   const host = window.document.getElementById('d2l-grade-calc');
   assert.equal(host.parentElement.id, 'd_page_header');
-  assert.equal($('pct').textContent, '81.22%'); // 333 / 410
-  assert.match($('sub').textContent, /Total points/);
+  assert.equal($('pct').textContent, 'Please input weights');
+  assert.equal($('title').textContent, 'Grade not shown yet');
+  assert.equal($('usePoints').hidden, false);
+  assert.ok($('weights').classList.contains('primary'), 'Set weights is highlighted');
+  $('toggle').click();
+  assert.equal($('pointsLine').hidden, true, 'points total (which is the grade) is hidden too');
 
   const info = chrome.data['info:' + COURSE];
   assert.equal(info.courseName, 'CPSC-374-01 - Algorithms and Data Structures');
   assert.equal(info.rawGroups.length, 5);
   assert.deepEqual(plain(info.meta), { host: 'sru.desire2learn.com', ou: '4066209', courseCode: 'CPSC-374', term: '202630' });
+});
+
+test('"Use total points" shows the points grade, is remembered, and can be undone', async () => {
+  const { chrome, $ } = await openPage(CATEGORIZED);
+  $('usePoints').click();
+  assert.equal($('pct').textContent, '81.22%'); // 333 / 410
+  assert.match($('sub').textContent, /Total points/);
+  assert.equal($('usePoints').hidden, true);
+  await tick(5);
+  assert.equal(chrome.data['points:' + COURSE], true);
+
+  $('toggle').click();
+  assert.match($('pointsText').textContent, /333 \/ 410 points/);
+  assert.equal($('pointsChoice').hidden, false);
+  $('stopPoints').click();
+  await tick(5);
+  assert.equal($('pct').textContent, 'Please input weights');
+  assert.equal(chrome.data['points:' + COURSE], undefined);
+});
+
+test('the total-points choice is loaded on the next visit', async () => {
+  const { $ } = await openPage(CATEGORIZED, { initial: { ['points:' + COURSE]: true } });
+  assert.equal($('pct').textContent, '81.22%');
+});
+
+test('typing a weight replaces the prompt with the weighted grade', async () => {
+  const { window, shadow, $ } = await openPage(CATEGORIZED);
+  $('toggle').click();
+  const input = shadow().querySelector('input[data-name="Quizzes"]');
+  input.value = '100';
+  input.dispatchEvent(new window.Event('input'));
+  assert.equal($('pct').textContent, '78.67%');
+  assert.equal($('usePoints').hidden, true);
 });
 
 test('course identity falls back to the page title when D2L refuses', async () => {
@@ -176,6 +213,30 @@ test('badge fades out while scrolling down', async () => {
   scrollTo(0);
   assert.equal(host.style.opacity, '1');
   assert.equal(host.style.visibility, 'visible');
+});
+
+test('badge stays fully visible while the Breakdown is open, fades again once closed', async () => {
+  const { window, $ } = await openPage(CATEGORIZED);
+  const host = window.document.getElementById('d2l-grade-calc');
+  const scrollTo = (y) => {
+    Object.defineProperty(window, 'scrollY', { value: y, configurable: true });
+    window.dispatchEvent(new window.Event('scroll'));
+  };
+  $('toggle').click();
+  scrollTo(400);
+  assert.equal(host.style.opacity, '1');
+  assert.equal(host.style.visibility, 'visible');
+  window.document.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape' }));
+  assert.equal(host.style.visibility, 'hidden', 'closing at 400px down applies the fade right away');
+});
+
+test('grouping note matches the course: no categories vs some items outside categories', async () => {
+  const flat = await openPage(FLAT);
+  flat.$('toggle').click();
+  assert.match(flat.shadow().querySelector('.details').textContent, /doesn't use D2L categories/);
+  const mixed = await openPage(CATEGORIZED); // has categories plus "Syllabus Quiz" outside them
+  mixed.$('toggle').click();
+  assert.match(mixed.shadow().querySelector('.details').textContent, /Items outside D2L categories were grouped by name/);
 });
 
 test('pages without a grades table are left alone', async () => {

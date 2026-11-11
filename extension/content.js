@@ -70,6 +70,10 @@
 
   let weights = {};
   let source = null;
+  // Until weights are set the badge asks for them instead of showing a grade.
+  // "Use total points" (remembered per course, on this computer only) shows the points grade instead.
+  let usePoints = false;
+  const pointsKey = 'points:' + courseKey;
   let detailsOpen = false;
   let saveTimer = null;
 
@@ -91,6 +95,8 @@
       max-width: calc(100vw - 16px);
     }
     .pct { font-size: 26px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+    .pct.prompt { font-size: 18px; color: #006fbf; }
+    .label button.link { font-size: 12px; text-align: left; }
     .label { display: flex; flex-direction: column; gap: 2px; }
     .label b { font-size: 13px; font-weight: 700; }
     .label span { font-size: 12px; color: #565a5c; }
@@ -108,6 +114,8 @@
     .details {
       position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%);
       min-width: 100%; max-width: calc(100vw - 16px); overflow-x: auto; z-index: 1000;
+      /* Long lists scroll inside the panel instead of running down the page. */
+      max-height: min(70vh, 640px); overflow-y: auto; overscroll-behavior: contain;
       background: #fff; border: 1px solid #cdd5dc; border-radius: 10px;
       box-shadow: 0 6px 20px rgba(0,0,0,.12);
       padding: 10px 12px; font-size: 13px; white-space: normal;
@@ -115,6 +123,7 @@
     table { border-collapse: collapse; width: 100%; }
     th, td { padding: 5px 8px; text-align: left; border-bottom: 1px solid #e6eaf0; vertical-align: middle; }
     th { font-size: 12px; color: #565a5c; font-weight: 600; }
+    thead th { position: sticky; top: -10px; background: #fff; z-index: 1; } /* headings stay visible while the list scrolls */
     tfoot td { border-bottom: 0; font-weight: 700; }
     .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .muted { color: #868c8f; }
@@ -146,7 +155,7 @@
         ? `<div class="note">D2L shows ${fmt(c.d2lPct)}</div>` : '';
       // Groups built from uncategorized items list what's in them.
       const itemsNote = c.fromLoose && (c.itemNames.length > 1 || c.itemNames[0] !== c.name)
-        ? `<div class="note">${esc(c.itemNames.join(', '))}</div>` : '';
+        ? `<div class="note">${esc(D2LGrouping.itemSummary(c))}</div>` : '';
       return `<tr>
         <td>${esc(c.name)}${d2lNote}${itemsNote}</td>
         <td class="num">${c.pct == null ? '<span class="muted">Not graded</span>' : fmt(c.pct)}</td>
@@ -162,8 +171,9 @@
       <div class="badge" role="group" aria-label="Current grade">
         <div class="pct" id="pct" aria-live="polite"></div>
         <div class="label">
-          <b>Current grade</b>
+          <b id="title">Current grade</b>
           <span id="sub"></span>
+          <button type="button" class="link" id="usePoints" hidden>Use total points instead</button>
           <span class="warn" id="warnShort" hidden>Check weights. See Breakdown</span>
         </div>
         <div class="actions">
@@ -177,10 +187,14 @@
               <tbody>${rows}</tbody>
               <tfoot><tr><td>Total</td><td></td><td></td><td class="num" id="wTotal"></td></tr></tfoot>
             </table>
-            <div class="warnings" id="pointsLine" hidden><span class="muted" id="pointsText"></span></div>
+            <div class="warnings" id="pointsLine" hidden><span class="muted" id="pointsText"></span>
+              <span class="muted" id="pointsChoice" hidden>Showing total points because you chose it.
+                <button type="button" class="link" id="stopPoints">Hide the grade until weights are set</button></span></div>
             <div class="warnings" id="warnings"></div>
             <div class="hint">Type a weight to update your grade. Changes save automatically.</div>
-            ${hasLoose ? `<div class="hint">This course doesn't use D2L categories, so items were grouped by name.
+            ${hasLoose ? `<div class="hint">${rawGroups.some((g) => !g.loose)
+              ? 'Items outside D2L categories were grouped by name.'
+              : 'This course doesn\'t use D2L categories, so items were grouped by name.'}
               <button type="button" class="link" id="editGroups">Edit groups</button></div>` : ''}
           </div>` : ''}
       </div>`;
@@ -196,6 +210,19 @@
     shadow.getElementById('weights').addEventListener('click', () => {
       api.runtime.sendMessage({ type: 'openWeights', course: courseKey });
     });
+    shadow.getElementById('usePoints').addEventListener('click', () => {
+      usePoints = true;
+      api.storage.local.set({ [pointsKey]: true });
+      render();
+    });
+    const stopPoints = shadow.getElementById('stopPoints');
+    if (stopPoints) {
+      stopPoints.addEventListener('click', () => {
+        usePoints = false;
+        api.storage.local.remove(pointsKey);
+        render();
+      });
+    }
     const editGroups = shadow.getElementById('editGroups');
     if (editGroups) {
       editGroups.addEventListener('click', () => {
@@ -216,19 +243,29 @@
     }
     refresh();
     layout();
+    onScroll(); // re-apply (or lift) the scroll fade when the Breakdown opens or closes
   }
 
   // Updates the numbers without rebuilding anything.
   function refresh() {
     const g = computeGrade(categories, weights);
-    shadow.getElementById('pct').textContent = fmt(g.pct);
-    shadow.getElementById('sub').textContent = g.mode === 'weighted'
-      ? (source && source.from === 'shared'
-        ? `Weights shared by ${source.students} student${source.students === 1 ? '' : 's'}` +
-          (source.scope === 'course' ? ' in another section' : '')
-        : 'Weighted by your category weights')
-      : 'Total points. Set weights for a weighted grade';
-    shadow.getElementById('weights').classList.toggle('primary', g.mode === 'points' && !detailsOpen);
+    const needWeights = g.mode === 'points' && !usePoints;
+    const pct = shadow.getElementById('pct');
+    pct.textContent = needWeights ? 'Please input weights' : fmt(g.pct);
+    pct.classList.toggle('prompt', needWeights);
+    shadow.querySelector('.badge').setAttribute('aria-label', needWeights ? 'Grade hidden until weights are set' : 'Current grade');
+    shadow.getElementById('title').textContent = needWeights ? 'Grade not shown yet' : 'Current grade';
+    shadow.getElementById('sub').hidden = needWeights; // keep the prompt badge short
+    shadow.getElementById('sub').textContent = needWeights
+      ? ''
+      : g.mode === 'weighted'
+        ? (source && source.from === 'shared'
+          ? `Weights shared by ${source.students} student${source.students === 1 ? '' : 's'}` +
+            (source.scope === 'course' ? ' in another section' : '')
+          : 'Weighted by your category weights')
+        : 'Total points (your choice for this course)';
+    shadow.getElementById('usePoints').hidden = !needWeights;
+    shadow.getElementById('weights').classList.toggle('primary', needWeights && !detailsOpen);
 
     const warnings = [];
     if (g.mode === 'weighted') {
@@ -240,8 +277,10 @@
     if (!detailsOpen) return;
     const total = categories.reduce((a, c) => a + (weights[c.name] > 0 ? weights[c.name] : 0), 0);
     shadow.getElementById('wTotal').textContent = total ? +total.toFixed(2) + '%' : '–';
-    shadow.getElementById('pointsLine').hidden = g.mode !== 'points';
-    if (g.mode === 'points') {
+    // The points total is the grade, so it's only shown when the user chose total points.
+    shadow.getElementById('pointsLine').hidden = g.mode !== 'points' || needWeights;
+    shadow.getElementById('pointsChoice').hidden = needWeights || g.mode !== 'points';
+    if (g.mode === 'points' && !needWeights) {
       shadow.getElementById('pointsText').textContent = `${+g.earned.toFixed(2)} / ${+g.possible.toFixed(2)} points on graded items.`;
     }
     shadow.getElementById('warnings').innerHTML = warnings.map((w) => `<span class="warn">${esc(w)}</span>`).join('');
@@ -298,8 +337,9 @@
   window.addEventListener('resize', () => layout());
 
   // Fade out over the first ~140px of scrolling.
+  // While the Breakdown is open it stays fully visible, so long lists stay readable.
   function onScroll() {
-    const o = Math.max(0, 1 - window.scrollY / 140);
+    const o = detailsOpen ? 1 : Math.max(0, 1 - window.scrollY / 140);
     host.style.opacity = String(o);
     host.style.visibility = o === 0 ? 'hidden' : 'visible';
     host.style.pointerEvents = o < 0.3 ? 'none' : '';
@@ -343,6 +383,10 @@
       source = changes[sourceKey].newValue || null;
       if (!changed) refresh(); // only the "shared by" label changes
     }
+    if (changes[pointsKey] && !!changes[pointsKey].newValue !== usePoints) {
+      usePoints = !!changes[pointsKey].newValue; // chosen in another tab
+      changed = true;
+    }
     if (changed) render();
   });
 
@@ -368,10 +412,11 @@
   }
 
   async function init() {
-    const res = await api.storage.local.get([weightsKey, groupsKey, sourceKey]);
+    const res = await api.storage.local.get([weightsKey, groupsKey, sourceKey, pointsKey]);
     weights = { ...(res[weightsKey] || {}) };
     groupOverrides = res[groupsKey] || {};
     source = res[sourceKey] || null;
+    usePoints = !!res[pointsKey];
     categories = D2LGrouping.buildCategories(rawGroups, groupOverrides);
     render();
     onScroll();

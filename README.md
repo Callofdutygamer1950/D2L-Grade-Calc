@@ -4,7 +4,7 @@ A browser extension for Chrome and Firefox that shows your overall course grade 
 
 Not affiliated with or endorsed by D2L Corporation. D2L and Brightspace are trademarks of D2L Corporation. Privacy policy: [PRIVACY.md](PRIVACY.md).
 
-- **No weights set:** shows total points earned ÷ points possible on graded items.
+- **No weights set:** the badge says "Please input weights" instead of a grade. For courses graded by total points, **Use total points instead** shows points earned ÷ points possible on graded items (remembered per course, on this computer; undo it from the Breakdown).
 - **Weights set:** shows the weighted grade. Each category's % (points earned ÷ possible) is multiplied by its weight.
 - **Ungraded items** (`- / 50`) are skipped. Dropped or exempt items are skipped too.
 - **Breakdown** lists each category's %, how many items are graded, and its weight. You can type weights right there: the grade updates as you type and saves automatically.
@@ -38,13 +38,13 @@ Setups are shared through a Supabase database (`supabase/schema.sql`, project se
 
 ## Install in Firefox
 
-Temporary install, removed when Firefox closes:
+Needs Firefox 140 or newer. Temporary install, removed when Firefox closes:
 
 1. Go to `about:debugging#/runtime/this-firefox`.
 2. Click **Load Temporary Add-on…** and pick `extension/manifest.json`.
 3. If Firefox asks, allow the extension to run on desire2learn.com. You can also do this from the puzzle-piece menu → the extension → **Always allow on …**.
 
-To keep it installed permanently in regular Firefox, it has to be signed: upload it as an unlisted add-on at addons.mozilla.org. That's free, and you don't have to publish it publicly.
+To keep it installed permanently in regular Firefox, it has to be signed by Mozilla through addons.mozilla.org (free). See [store/firefox-addons.md](store/firefox-addons.md).
 
 ## Other D2L addresses
 
@@ -84,7 +84,7 @@ node tests/harness/serve.js
 - Weights page: http://127.0.0.1:5178/?course=flat (no categories) or `?course=demo` (categories); `&shared=1`, `&configured=0`. `tests/fixtures/sample-syllabus.pdf` is a made-up syllabus to try the PDF upload with.
 - Badge: http://127.0.0.1:5178/tests/harness/badge.html (`?weights=1`, `?shared=1`)
 
-Firefox checks: `npm run lint:firefox` (Mozilla's `web-ext lint`). Expected warnings: `background.service_worker` (Chrome-only key, Firefox uses `background.scripts`), `eval`/`import` inside the bundled pdf.js (disabled with `isEvalSupported: false` and blocked by extension CSP), and `innerHTML` in `content.js` (all D2L text is escaped first; covered by a test).
+Firefox checks: `npm run lint:firefox` (Mozilla's `web-ext lint`). Expected warnings: `background.service_worker` (Chrome-only key, Firefox uses `background.scripts`; gone in the `npm run build:firefox` package), `data_collection_permissions` needing Firefox for Android 142 (Android isn't supported yet), `eval`/`import` inside the bundled pdf.js (disabled with `isEvalSupported: false` and blocked by extension CSP), and `innerHTML` in `content.js` (all D2L text is escaped first; covered by a test).
 
 ## Publishing
 
@@ -93,7 +93,7 @@ npm run build:chrome    # dist/grade-calculator-for-d2l-chrome-<version>.zip
 npm run build:firefox   # dist/grade-calculator-for-d2l-firefox-<version>.zip
 ```
 
-The store builds use the same code with a browser-specific manifest. `npm run icons` re-renders the icons from `assets/icon.svg`. `npm run store-images` (with `node tests/harness/serve.js` running) re-makes the store screenshots and promo tile in `store/images/`. Every Chrome Web Store form answer is in [store/chrome-web-store.md](store/chrome-web-store.md). For an update, bump `version` in `extension/manifest.json` first.
+The store builds use the same code with a browser-specific manifest. `npm run icons` re-renders the icons from `assets/icon.svg`. `npm run store-images` (with `node tests/harness/serve.js` running) re-makes the store screenshots and promo tile in `store/images/`. Every Chrome Web Store form answer is in [store/chrome-web-store.md](store/chrome-web-store.md), and the Firefox Add-ons (AMO) steps are in [store/firefox-addons.md](store/firefox-addons.md). For an update, bump `version` in `extension/manifest.json` first.
 
 ## Files
 

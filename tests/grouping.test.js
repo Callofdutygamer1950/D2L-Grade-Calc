@@ -18,6 +18,46 @@ test('baseName strips trailing numbers', () => {
   assert.equal(g.baseName('2024'), '2024', 'never returns an empty name');
 });
 
+test('baseName strips trailing dates and date ranges', () => {
+  for (const name of [
+    'Weekly Progress Report Nov 2 - Nov 6',
+    'Weekly Progress Report Nov 30 - Dec 4',
+    'Weekly Progress Report November 16th - November 20th, 2026',
+    'Weekly Progress Report 11/2 - 11/6',
+    'Weekly Progress Report (Nov 2)',
+    'Weekly Progress Report: 2026-11-02',
+    'Weekly Progress Report Week of Nov 2',
+    'Weekly Progress Report Nov 2 to Nov 6',
+    'Weekly Progress Report – Sept 5',
+  ]) assert.equal(g.baseName(name), 'Weekly Progress Report', name);
+  assert.equal(g.baseName('Lab 2 - Nov 3'), 'Lab', 'number and date together');
+  assert.equal(g.baseName('Reflection (11/3/26)'), 'Reflection');
+});
+
+test('baseName leaves names alone when nothing trailing is a number or date', () => {
+  for (const name of ['Group Project', 'Project PowerPoint Slides', 'Narrative Presentation', 'Introduction to',
+    'Final Exam May', 'March Madness Quiz', 'Project Evaluation']) {
+    assert.equal(g.baseName(name), name, name);
+  }
+  assert.equal(g.baseName('Nov 6'), 'Nov 6', 'a name that is only a date is kept');
+});
+
+test('weekly reports with date ranges become one group', () => {
+  const weeks = ['Nov 2 - Nov 6', 'Nov 9 - Nov 13', 'Nov 16 - Nov 20', 'Nov 23 - Nov 27', 'Nov 30 - Dec 4'];
+  const raw = [loose('Group Project', null, 50), ...weeks.map((w, i) => loose('Weekly Progress Report ' + w, i < 2 ? 9 : null, 10))];
+  const cats = g.buildCategories(raw, {});
+  assert.deepEqual(cats.map((c) => c.name), ['Group Project', 'Weekly Progress Report']);
+  assert.equal(cats[1].itemNames.length, 5);
+  assert.equal(cats[1].pct, 90, '18 / 20 on the two graded reports');
+  assert.equal(g.itemSummary(cats[1]), weeks.join(', '), 'list shows just the dates');
+});
+
+test('itemSummary falls back to full names when items do not share the group name', () => {
+  assert.equal(g.itemSummary({ name: 'HW', itemNames: ['HW01', 'HW02'] }), 'HW01, HW02', 'glued-on numbers keep full names');
+  assert.equal(g.itemSummary({ name: 'Quiz', itemNames: ['Quiz 1', 'Quiz #2'] }), '1, #2');
+  assert.equal(g.itemSummary({ name: 'Late work', itemNames: ['HW02', 'Quiz 3'] }), 'HW02, Quiz 3');
+});
+
 test('auto groups need two or more items with the same base name', () => {
   const cats = g.buildCategories([...FLAT, loose('Project 1', 90, 100)], {});
   assert.deepEqual(cats.map((c) => c.name), ['HW', 'GroupProj', 'Project 1']);

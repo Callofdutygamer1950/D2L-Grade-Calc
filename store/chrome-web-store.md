@@ -20,7 +20,7 @@ See your overall course grade right on the D2L Brightspace Grades page.
 D2L shows each assignment and category, but often not the grade you actually have in the course. Grade Calculator for D2L adds a small badge to the top of the Grades page with your current overall grade. It fades away as you scroll.
 
 FEATURES
-• Your current grade at a glance: total points earned ÷ points possible, or a weighted grade once you set category weights.
+• Your current grade at a glance, weighted by your course's category weights. Until weights are entered it asks for them; for courses graded by total points, one click shows points earned ÷ points possible instead.
 • Ungraded items are skipped, so you see where you stand right now. Dropped and exempt items are skipped too, and bonus points count.
 • Breakdown: see each category's %, how many items are graded, and its weight. Type a weight and your grade updates instantly.
 • Import weights from your syllabus: upload the PDF or paste the grading section. It reads percentage breakdowns ("Quizzes … 20%") and points tables ("Category Points … Total 1,000") and fills the weights in for you to check.

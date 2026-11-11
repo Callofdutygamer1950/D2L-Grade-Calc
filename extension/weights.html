@@ -55,7 +55,8 @@
 
     <section id="syllabus" hidden>
       <h2>Fill from syllabus</h2>
-      <p class="muted">Upload the syllabus PDF or paste its grading section. The extension looks for lines like “Quizzes … 20%” or a points table like “Quizzes 200 … Total 1,000” and fills in the boxes above. Nothing leaves your computer. Check the numbers before saving.</p>
+      <p id="startHere" class="start" hidden>No weights saved yet. Start here, or type them in the table below.</p>
+      <p class="muted">Upload the syllabus PDF or paste its grading section. The extension looks for lines like “Quizzes … 20%” or a points table like “Quizzes 200 … Total 1,000” and fills in the boxes <span id="boxesWhere">above</span>. Nothing leaves your computer. Check the numbers before saving.</p>
       <div class="field">
         <label for="pdf">Syllabus PDF</label>
         <input type="file" id="pdf" accept="application/pdf,.pdf">

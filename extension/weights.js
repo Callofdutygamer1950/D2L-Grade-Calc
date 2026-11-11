@@ -13,7 +13,7 @@ const infoKey = 'info:' + courseKey;
 const sourceKey = 'source:' + courseKey;
 const MINE = { from: 'user' }; // marks a setup as the user's own, so it gets shared
 const fmt = (n) => (n == null ? '–' : (Math.round(n * 100) / 100).toFixed(2) + '%');
-const { buildCategories, looseItemList } = globalThis.D2LGrouping;
+const { buildCategories, looseItemList, itemSummary } = globalThis.D2LGrouping;
 
 let categories = [];
 let rawGroups = [];
@@ -52,7 +52,7 @@ function renderRows(saved) {
     if (c.fromLoose && (c.itemNames.length > 1 || c.itemNames[0] !== c.name)) {
       const items = document.createElement('span');
       items.className = 'hint';
-      items.textContent = c.itemNames.join(', ');
+      items.textContent = itemSummary(c);
       nameTd.appendChild(items);
     }
     const hint = document.createElement('span');
@@ -221,6 +221,21 @@ async function saveGroups(message) {
   setStatus($('groupStatus'), message + ' Your D2L tab has updated.');
 }
 
+// "Fill from syllabus" goes first while the course has no saved weights (that's the
+// quickest way to get them), and back under the weights table once some are saved.
+// Based on saved weights, not typed ones, so the page never jumps while typing.
+function placeSyllabus(hasSavedWeights, keepEditorInView) {
+  const syllabus = $('syllabus');
+  const editor = $('editor');
+  const atTop = syllabus.nextElementSibling === editor;
+  if (!hasSavedWeights && !atTop) editor.before(syllabus);
+  if (hasSavedWeights && atTop) $('sharing').before(syllabus);
+  $('startHere').hidden = hasSavedWeights;
+  $('boxesWhere').textContent = hasSavedWeights ? 'above' : 'below';
+  // The Save/Clear buttons the user just clicked shift when the section moves; keep them visible.
+  if (keepEditorInView && atTop !== !hasSavedWeights) editor.scrollIntoView({ block: 'start', behavior: 'smooth' });
+}
+
 async function init() {
   const res = await api.storage.local.get([infoKey, weightsKey, groupsKey, sourceKey]);
   const info = res[infoKey];
@@ -237,6 +252,7 @@ async function init() {
   $('editor').hidden = false;
   $('syllabus').hidden = false;
   renderRows(res[weightsKey] || {});
+  placeSyllabus(Object.keys(res[weightsKey] || {}).length > 0, false);
   renderGroupEditor();
   $('resetGroups').addEventListener('click', () => {
     groupOverrides = {};
@@ -245,15 +261,18 @@ async function init() {
   if (location.hash === '#groups' && !$('groups').hidden) $('groups').scrollIntoView();
 
   $('save').addEventListener('click', async () => {
-    await api.storage.local.set({ [weightsKey]: readInputs(), [sourceKey]: MINE });
+    const saved = readInputs();
+    await api.storage.local.set({ [weightsKey]: saved, [sourceKey]: MINE });
     document.querySelectorAll('#rows input.filled').forEach((i) => i.classList.remove('filled'));
     setStatus($('status'), 'Saved. Your D2L tab has updated.');
+    placeSyllabus(Object.keys(saved).length > 0, true);
   });
   $('clear').addEventListener('click', async () => {
     await api.storage.local.remove(weightsKey);
     await api.storage.local.set({ [sourceKey]: MINE });
     renderRows({});
-    setStatus($('status'), 'Cleared. The badge shows total points again.');
+    setStatus($('status'), 'Cleared. The badge will ask for weights again.');
+    placeSyllabus(false, true);
   });
   $('find').addEventListener('click', findWeights);
 
