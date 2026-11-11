@@ -1,7 +1,8 @@
 # Dependencies (dev/test only; the extension itself has none)
 node_modules/
 
-# Packaged builds. Rebuild from source instead of committing them.
+# Packaged builds (npm run build:chrome / build:firefox). Rebuild from source instead of committing them.
+dist/
 *.zip
 *.crx
 *.xpi

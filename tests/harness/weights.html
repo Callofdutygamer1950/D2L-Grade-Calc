@@ -19,12 +19,12 @@
     const LOOSE = (name, e, p) => ({ name, d2lPct: null, items: [ITEM(name, e, p)], loose: true });
     const COURSES = {
       flat: {
-        courseName: 'CPSC-237-01 - Mobile App Development (harness)',
+        courseName: 'CPSC-237-01 - Mobile App Development',
         rawGroups: [LOOSE('HW01', 16, 16), LOOSE('HW02', 22, 22), LOOSE('HW03', 32, 32), LOOSE('HW04', 45, 46),
           LOOSE('GroupProj', 43, 50), LOOSE('HW05', 35, 36)],
       },
       demo: {
-        courseName: 'CPSC-374-01 - Algorithms and Data Structures (harness)',
+        courseName: 'CPSC-374-01 - Algorithms and Data Structures',
         rawGroups: [
           { name: 'Quizzes', d2lPct: 78.67, loose: false, items: [ITEM('Quiz #1', 29, 50), ITEM('Quiz #2', 49, 50), ITEM('Quiz #3', 40, 50), ITEM('Quiz #4', null, 50)] },
           { name: 'Assignments', d2lPct: 90, loose: false, items: [ITEM('Assignment 1', 45, 50), ITEM('Assignment 2', 70, 100)] },
@@ -70,6 +70,15 @@
       document.body.appendChild(s);
     });
     await import('/extension/weights.js');
+
+    // ?shot=syllabus: paste a sample grading section and run Find weights (used for screenshots).
+    if (params.get('shot') === 'syllabus') {
+      await new Promise((r) => setTimeout(r, 200));
+      document.getElementById('paste').value = [
+        'COURSE GRADES', 'Category Points', 'Assignments 500', 'Midterm Exam 100', 'Final Exam 200', 'Quizzes 200', 'Total 1,000',
+      ].join('\n');
+      document.getElementById('find').click();
+    }
   </script>
 </body>
 </html>

@@ -1,8 +1,16 @@
 {
   "manifest_version": 3,
-  "name": "D2L Grade Calculator",
+  "name": "Grade Calculator for D2L",
+  "short_name": "Grade Calc",
   "version": "1.0.0",
-  "description": "Shows your overall course grade at the top of the D2L Grades page, using category weights you set or pull from your syllabus.",
+  "description": "Shows your overall course grade at the top of the D2L Brightspace Grades page, using weights you set or pull from your syllabus.",
+  "homepage_url": "https://github.com/Callofdutygamer1950/D2L-Grade-Calc",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "permissions": ["storage"],
   "host_permissions": ["https://chhfebjnwftjyogxyzcx.supabase.co/*"],
   "background": {

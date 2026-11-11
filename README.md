@@ -1,6 +1,8 @@
-# D2L Grade Calculator
+# Grade Calculator for D2L
 
 A browser extension for Chrome and Firefox that shows your overall course grade in the middle of the **Grades** title row on D2L (Brightspace). The badge fades away as you scroll down.
+
+Not affiliated with or endorsed by D2L Corporation. D2L and Brightspace are trademarks of D2L Corporation. Privacy policy: [PRIVACY.md](PRIVACY.md).
 
 - **No weights set:** shows total points earned ÷ points possible on graded items.
 - **Weights set:** shows the weighted grade. Each category's % (points earned ÷ possible) is multiplied by its weight.
@@ -83,6 +85,15 @@ node tests/harness/serve.js
 - Badge: http://127.0.0.1:5178/tests/harness/badge.html (`?weights=1`, `?shared=1`)
 
 Firefox checks: `npm run lint:firefox` (Mozilla's `web-ext lint`). Expected warnings: `background.service_worker` (Chrome-only key, Firefox uses `background.scripts`), `eval`/`import` inside the bundled pdf.js (disabled with `isEvalSupported: false` and blocked by extension CSP), and `innerHTML` in `content.js` (all D2L text is escaped first; covered by a test).
+
+## Publishing
+
+```bash
+npm run build:chrome    # dist/grade-calculator-for-d2l-chrome-<version>.zip
+npm run build:firefox   # dist/grade-calculator-for-d2l-firefox-<version>.zip
+```
+
+The store builds use the same code with a browser-specific manifest. `npm run icons` re-renders the icons from `assets/icon.svg`. `npm run store-images` (with `node tests/harness/serve.js` running) re-makes the store screenshots and promo tile in `store/images/`. Every Chrome Web Store form answer is in [store/chrome-web-store.md](store/chrome-web-store.md). For an update, bump `version` in `extension/manifest.json` first.
 
 ## Files
 

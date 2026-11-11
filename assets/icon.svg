@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Grade Calculator for D2L: a grade "meter" ring with a check. Shapes only (no text) so it reads at 16px. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a7fd6"/>
+      <stop offset="1" stop-color="#0a5ea8"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="120" height="120" rx="26" fill="url(#bg)"/>
+  <!-- ring track -->
+  <circle cx="64" cy="64" r="36" fill="none" stroke="#ffffff" stroke-opacity="0.28" stroke-width="13"/>
+  <!-- ring progress (~85%), starting at the top -->
+  <circle cx="64" cy="64" r="36" fill="none" stroke="#ffffff" stroke-width="13" stroke-linecap="round"
+          stroke-dasharray="192 227" transform="rotate(-90 64 64)"/>
+  <!-- check -->
+  <path d="M47 65 L59 77 L82 52" fill="none" stroke="#ffffff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
