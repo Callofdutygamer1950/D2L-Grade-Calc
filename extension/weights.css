@@ -95,3 +95,11 @@ button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px
   td:first-child { overflow-wrap: anywhere; }
 }
 #foundList li.block { font-weight: 600; }
+
+/* Bug-report line at the bottom of the page. */
+.report {
+  margin-top: 24px; text-align: center;
+  font-size: 13px; color: var(--muted); overflow-wrap: anywhere;
+}
+.report a { color: var(--accent); }
+.report a:hover { color: var(--accent-hover); }
